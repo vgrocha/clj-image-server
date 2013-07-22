@@ -7,7 +7,8 @@
                  [ring "1.2.0"]]
   :plugins [[lein-ring "0.8.6"]]
   :ring {:handler image-server.handler/app
-         :port 8080}
+         :port 8080
+         :init image-server.handler/init}
   :profiles
   {:dev {:dependencies [[ring-mock "0.1.5"]
                         #_[ring-serve "0.1.2"]]}})
