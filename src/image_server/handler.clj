@@ -37,17 +37,21 @@
    filename-str))
 
 (defn buff-file-store
-  "Save file and pass it along the request as byte array"
-  [& {:keys [save-file?]}]
+  "This function is used to handle submitted files by
+   turning them to byte-arrays.
+   Optionally can 'save-file' to specified 'save-folder'"
+  [& {:keys [save-file]}]
   (fn [item]
-    (let [stream (ByteArrayOutputStream.)
-          filepath (File. (get-dated-filename (:filename item)))]
+    (let [stream (ByteArrayOutputStream.)]
+      ;saves the stream
       (io/copy (:stream item) stream)
 
-      (println "saving" (:stream item) "to" filepath)
-      (.createNewFile filepath)
-      (io/copy (.toByteArray stream) filepath)
+      (when save-file
+        (let [filepath (File. (create-dated-filename (:filename item)))] (println "saving" (:stream item) "to" filepath)
+             (.createNewFile filepath)
+             (io/copy (.toByteArray stream) filepath)))
 
+      ;;assoc the byte-array to the request
       (-> (select-keys item [:filename :content-type])
           (assoc :byte-array (.toByteArray stream))))))
 
@@ -124,7 +128,7 @@
 
 (def app
   (-> (handler/api app-routes)
-      (wrap-multipart-params {:store (buff-file-store)})
+      (wrap-multipart-params {:store (buff-file-store :save-file true)})
       wrap-stacktrace-web))
 
 (def server (atom nil))
