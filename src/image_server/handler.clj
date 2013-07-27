@@ -22,12 +22,12 @@
   (File. (str (System/getProperty "user.dir") File/separatorChar  "public")))
 
 (defn init
-  "Init hook to create the destination folder"
+  "Init hook to create the save-folder path"
   []
   (when-not (.isDirectory save-folder)
     (.mkdirs save-folder)))
 
-(defn get-dated-filename
+(defn create-dated-filename
   "Given a filename, returns the location inside 'save-folder' with date on the filename in order to view it later"
   [filename-str]
   (str
@@ -35,7 +35,8 @@
    File/separatorChar
    (ftime/unparse (ftime/formatters :basic-date-time)
                   (time/now))
-   #_(bit-and 0xFFFF (System/nanoTime))
+   ;;optionally bind nanotime to avoid colisions
+   #_(bit-and 0xFFFF (System/nanoTime)) 
    filename-str))
 
 (defn buff-file-store
@@ -79,20 +80,19 @@
      [:em "$ curl -X DELETE http://" hostname "/file/<filename>"]]
     
     "Using store location" (.getAbsolutePath save-folder) [:br]
-    "Home folder is" (System/getProperty "user.home") [:br]
+    ;; "Home folder is" (System/getProperty "user.home") [:br]
 
-    "user.home=" (System/getProperty "user.home") [:br]	
-    "user.dir=" (System/getProperty "user.dir") [:br]	
-    "java.io.tmpdir=" (System/getProperty "java.io.tmpdir") [:br]	
-    "java.home=" (System/getProperty "java.home") [:br]	
-    "catalina.home=" (System/getProperty "catalina.home") [:br]	
-    "catalina.base=" (System/getProperty "catalina.base") [:br]]))	
+    ;; "user.home=" (System/getProperty "user.home") [:br]	
+    ;; "user.dir=" (System/getProperty "user.dir") [:br]	
+    ;; "java.io.tmpdir=" (System/getProperty "java.io.tmpdir") [:br]	
+    ;; "java.home=" (System/getProperty "java.home") [:br]	
+    ;; "catalina.home=" (System/getProperty "catalina.home") [:br]	
+    ;; "catalina.base=" (System/getProperty "catalina.base") [:br]
+    ]))	
 
-
-(def root (str (System/getProperty "user.dir") "/public"))
 
 (defn list-files
-  "List files inside 'save-folder' in html format"
+  "List files inside 'save-folder' in html format with last-modified date and erase button"
   []
   (html
    [:html
@@ -146,5 +146,4 @@
 
 (defn start-server []
   (when (not @server)
-    (reset! server (run-jetty #'app {:port 8080 :join? false})))
-  )
+    (reset! server (run-jetty #'app {:port 8080 :join? false}))))
