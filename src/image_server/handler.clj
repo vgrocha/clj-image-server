@@ -71,7 +71,16 @@
              (file-upload "filename")
              [:br]
              (submit-button "Send!"))
-    "Files uploaded are" [:a {:href "/public"} "available"]]))
+    "Files uploaded are" [:a {:href "public"} "available"] [:br]
+    "Using store location" (.getAbsolutePath save-folder) [:br]
+    "Home folder is" (System/getProperty "user.home") [:br]
+
+    "user.home=" (System/getProperty "user.home") [:br]	
+    "user.dir=" (System/getProperty "user.dir") [:br]	
+    "java.io.tmpdir=" (System/getProperty "java.io.tmpdir") [:br]	
+    "java.home=" (System/getProperty "java.home") [:br]	
+    "catalina.home=" (System/getProperty "catalina.home") [:br]	
+    "catalina.base=" (System/getProperty "catalina.base") [:br]]))	
 
 
 (def root (str (System/getProperty "user.dir") "/public"))
