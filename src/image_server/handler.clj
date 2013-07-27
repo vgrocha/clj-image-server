@@ -66,7 +66,7 @@
     [:title
      "File upload server"]]
    [:html
-    (form-to {:enctype "multipart/form-data"} [:post "/upload-file"]
+    (form-to {:enctype "multipart/form-data"} [:post "upload-file"]
              "Chose file to process" [:br]
              (file-upload "filename")
              [:br]
@@ -101,12 +101,11 @@
   (POST "/upload-file" req (do
                              #_(println req)
                              (ByteArrayInputStream. (-> req :params :filename :byte-array))))
-  (route/resources "/asd")
   (context "/public" []
            (routes
             (GET "/index.htm" [] (list-files))
             (GET "/" [] (list-files))
-            (route/files "/")))
+            (route/files "/" {:root (.getAbsolutePath save-folder)})))
   (route/not-found "Not Found"))
 
 (def app
