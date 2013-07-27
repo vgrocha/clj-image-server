@@ -16,7 +16,7 @@
 
 (def save-folder
   "Folder to save incoming files"
-  (File. (or (System/getenv "user.home") "public")))
+  (File. (str (System/getProperty "user.dir") File/separatorChar  "public")))
 
 (defn init
   "Init hook to create the destination folder"
