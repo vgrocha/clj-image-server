@@ -50,7 +50,7 @@
       (io/copy (:stream item) stream)
 
       (when save-file
-        (let [filepath (File. (create-dated-filename (:filename item)))] (println "saving" (:stream item) "to" filepath)
+        (let [filepath (File. (create-dated-filename (:filename item)))]
              (.createNewFile filepath)
              (io/copy (.toByteArray stream) filepath)))
 
