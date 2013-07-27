@@ -126,9 +126,8 @@
 
 (defroutes app-routes
   (GET "/" [] index)
-  (POST "/file" req (do
-                      #_(println req)
-                      (ByteArrayInputStream. (-> req :params :filename :byte-array))))
+  ;; when posted, just echo the received image back
+  (POST "/file" req (ByteArrayInputStream. (-> req :params :filename :byte-array)))
   (context "/public" []
            (routes
             (GET "/index.htm" [] (list-files))
