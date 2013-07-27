@@ -95,17 +95,29 @@
      "Files uploaded were:" [:br]
      [:table
       [:thead
-       [:tr [:td "Filename"] [:td "Last modified"]]]
+       [:tr [:td "Filename"] [:td "Last modified"] [:td "Erase?"]]]
       (for [i (sort-by #(.lastModified %) > (file-seq save-folder))]
         (when (.isFile i)
-
           [:tbody
            [:tr
             [:td [:a {:href (str "public/" (.getName i))}
                   (.getName i) [:br]]]
             [:td (->> (.lastModified i)
                       coertime/from-long
-                      (ftime/unparse (ftime/formatters :date-time)))]]]))]]]))
+                      (ftime/unparse (ftime/formatters :date-time)))]
+            [:td (form-to [:delete (str "file/" (.getName i))]
+                          (submit-button "ERASE!"))[:a ]]]]))]]]))
+
+(defn delete-file [filename]
+  (let [f (File. (str save-folder File/separatorChar filename))
+        name (.getName f)
+        success (and (.isFile f)
+                     (.delete f))]
+    (html
+     (if success
+       (str name " deleted!")
+       (str "error deleting " name)) [:br]
+       [:a {:href "/public"} "Back"])))
 
 (defroutes app-routes
   (GET "/" [] form)
@@ -117,6 +129,7 @@
             (GET "/index.htm" [] (list-files))
             (GET "/" [] (list-files))
             (route/files "/" {:root (.getAbsolutePath save-folder)})))
+  (DELETE "/file/:filename" [filename] (delete-file filename))  
   (route/not-found "Not Found"))
 
 (def app
