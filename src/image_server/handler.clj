@@ -25,16 +25,6 @@
   (when-not (.isDirectory save-folder)
     (.mkdirs save-folder)))
 
-;;This was from a test from ring functions
-#_(defn temp-file-store [item]
-  (let [temp-file (File. "/tmp/tmpfile")]
-    (io/copy (:stream item) temp-file)
-    (-> (select-keys item [:filename :content-type])
-        (assoc :tempfile temp-file
-               :size (.length temp-file)))))
-
-
-
 (defn get-dated-filename
   "Given a filename, returns the location inside 'save-folder' with date on the filename in order to view it later"
   [filename-str]
