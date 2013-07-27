@@ -15,6 +15,8 @@
   (:import [java.io ByteArrayOutputStream ByteArrayInputStream File]
            (org.eclipse.jetty.server Request)))
 
+(def hostname (.getHostName (java.net.InetAddress/getLocalHost)))
+
 (def save-folder
   "Folder to save incoming files"
   (File. (str (System/getProperty "user.dir") File/separatorChar  "public")))
@@ -66,7 +68,14 @@
              (file-upload "filename")
              [:br]
              (submit-button "Send!"))
-    "Files uploaded are" [:a {:href "public"} "available"] [:br]
+    "Files uploaded are " [:a {:href "public"} "available"] [:br]
+    [:p
+     "To post a file you can use" [:br]
+     [:em "$ curl -X POST -F filename=@<filename> http://" hostname "/file"]]
+    [:p
+     "To delete a file you can use" [:br]
+     [:em "$ curl -X DELETE http://" hostname "/file/<filename>"]]
+    
     "Using store location" (.getAbsolutePath save-folder) [:br]
     "Home folder is" (System/getProperty "user.home") [:br]
 
