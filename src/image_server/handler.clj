@@ -10,7 +10,8 @@
             [compojure.route :as route]
             [clj-time
              [core :as time]
-             [format :as ftime]])
+             [format :as ftime]
+             [coerce :as coertime]])
   (:import [java.io ByteArrayOutputStream ByteArrayInputStream File]
            (org.eclipse.jetty.server Request)))
 
@@ -90,11 +91,21 @@
   []
   (html
    [:html
-    "Files uploaded were:" [:br]
-    (for [i (file-seq save-folder)]
-      (when (.isFile i)
-        [:a {:href (str "/public/" (.getName i))}
-         (.getName i) [:br]]))]))
+    [:body
+     "Files uploaded were:" [:br]
+     [:table
+      [:thead
+       [:tr [:td "Filename"] [:td "Last modified"]]]
+      (for [i (sort-by #(.lastModified %) > (file-seq save-folder))]
+        (when (.isFile i)
+
+          [:tbody
+           [:tr
+            [:td [:a {:href (str "public/" (.getName i))}
+                  (.getName i) [:br]]]
+            [:td (->> (.lastModified i)
+                      coertime/from-long
+                      (ftime/unparse (ftime/formatters :date-time)))]]]))]]]))
 
 (defroutes app-routes
   (GET "/" [] form)
