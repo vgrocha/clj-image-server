@@ -57,7 +57,9 @@
       (-> (select-keys item [:filename :content-type])
           (assoc :byte-array (.toByteArray stream))))))
 
-(def form
+(def index
+  "The index page with a form to upload file and information about
+   the server"
   (html
    [:head
     [:title
@@ -123,7 +125,7 @@
        [:a {:href "/public"} "Back"])))
 
 (defroutes app-routes
-  (GET "/" [] form)
+  (GET "/" [] index)
   (POST "/file" req (do
                       #_(println req)
                       (ByteArrayInputStream. (-> req :params :filename :byte-array))))
